@@ -1,3 +1,5 @@
+from typing import Optional
+
 import httpx
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
@@ -119,4 +121,36 @@ async def get_headlines_by_source(source_id: str):
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error fetching headlines: {str(e)}"
+        )
+
+
+@router.get("/news/headlines/filter")
+async def filter_headlines(country: Optional[str] = None, source: Optional[str] = None):
+    if not country and not source:
+        raise HTTPException(
+            status_code=400, detail="Provide at least one of 'country' or 'source'."
+        )
+
+    if country and source:
+        raise HTTPException(
+            status_code=400, detail="Cannot use both 'country' and 'source' together."
+        )
+
+    params = {
+        "apiKey": settings.NEWS_API_KEY,
+    }
+
+    if country:
+        params["country"] = country
+    elif source:
+        params["sources"] = source
+
+    try:
+        response = httpx.get("https://newsapi.org/v2/top-headlines", params=params)
+        response.raise_for_status()
+        data = response.json()
+        return NewsResponse(**data)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching filtered headlines: {str(e)}"
         )
