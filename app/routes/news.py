@@ -1,5 +1,5 @@
 import httpx
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -48,12 +48,22 @@ async def save_news():
     return {"status": "success", "message": f"{len(data.articles)} articles processed"}
 
 
-@router.get("/news/db")
-async def get_saved_news():
+router = APIRouter()
+
+
+@router.get("/news/latest")
+async def get_latest_news(skip: int = 0, limit: int = 3):
     try:
         async with AsyncSessionLocal() as session:
-            result = await session.execute(select(News))
-            articles = result.scalars().all()
-            return {"status": "ok", "articles": articles}
+            result = await session.execute(
+                select(News).order_by(News.created_at.desc()).offset(skip).limit(limit)
+            )
+            latest_news = result.scalars().all()
+
+            if not latest_news:
+                raise HTTPException(status_code=404, detail="No news found")
+
+        return {"status": "success", "latest_news": latest_news}
+
     except SQLAlchemyError as e:
         return {"status": "error", "message": str(e)}
