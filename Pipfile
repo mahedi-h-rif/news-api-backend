@@ -4,6 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+fastapi = "*"
+python-dotenv = "*"
+sqlalchemy = "*"
+asyncpg = "*"
 
 [dev-packages]
 black = "*"
@@ -13,3 +17,6 @@ pre-commit = "*"
 
 [requires]
 python_version = "3.8"
+
+[packages.uvicorn]
+extras = [ "standard",]
