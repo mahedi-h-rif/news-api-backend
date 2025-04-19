@@ -1,8 +1,11 @@
 import httpx
 from fastapi import APIRouter, Query
+from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.core.config import settings
 from app.db.db import AsyncSessionLocal
+from app.db.models import News
 from app.schemas.news import NewsResponse
 from app.services.news_api import create_news
 
@@ -43,3 +46,14 @@ async def save_news():
         for article in data.articles:
             await create_news(session, article)
     return {"status": "success", "message": f"{len(data.articles)} articles processed"}
+
+
+@router.get("/news/db")
+async def get_saved_news():
+    try:
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(select(News))
+            articles = result.scalars().all()
+            return {"status": "ok", "articles": articles}
+    except SQLAlchemyError as e:
+        return {"status": "error", "message": str(e)}
