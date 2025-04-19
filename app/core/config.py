@@ -19,7 +19,7 @@ class Settings:
 
     NEWS_API_KEY: str = os.getenv("NEWS_API_KEY", "")
     NEWS_API_URL: str = os.getenv(
-        "NEWS_API_URL", "https://newsapi.org/v2/top-headlines"
+        "NEWS_API_URL", "https://newsapi.org/v2/top-headlines?country=us"
     )
 
 

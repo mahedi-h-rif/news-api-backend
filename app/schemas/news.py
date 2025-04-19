@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -10,7 +11,7 @@ class Article(BaseModel):
     description: Optional[str]
     url: str
     urlToImage: Optional[str]
-    publishedAt: str
+    publishedAt: datetime
     content: Optional[str]
 
 
