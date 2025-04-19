@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 
 [dev-packages]
+black = "*"
+isort = "*"
+ruff = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.8"
