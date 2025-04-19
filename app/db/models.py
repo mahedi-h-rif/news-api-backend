@@ -12,4 +12,5 @@ class News(Base):
     url = Column(String(500), unique=True, nullable=False)
     source = Column(String(100), nullable=True)
     published_at = Column(DateTime(timezone=True), nullable=True)
+    country_code = Column(String(10), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

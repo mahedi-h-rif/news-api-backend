@@ -67,3 +67,56 @@ async def get_latest_news(skip: int = 0, limit: int = 3):
 
     except SQLAlchemyError as e:
         return {"status": "error", "message": str(e)}
+
+
+router = APIRouter()
+
+
+@router.get("/news/headlines/country/{country_code}")
+async def get_headlines_by_country(country_code: str):
+    try:
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(News)
+                .filter(News.country_code == country_code)
+                .order_by(News.published_at.desc())
+                .limit(10)
+            )
+            headlines = result.scalars().all()
+
+        if not headlines:
+            raise HTTPException(
+                status_code=404, detail="No headlines found for the given country"
+            )
+
+        return {"status": "success", "headlines": [headline for headline in headlines]}
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching headlines: {str(e)}"
+        )
+
+
+@router.get("/news/headlines/source/{source_id}")
+async def get_headlines_by_source(source_id: str):
+    try:
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(News)
+                .filter(News.source == source_id)
+                .order_by(News.published_at.desc())
+                .limit(10)
+            )
+            headlines = result.scalars().all()
+
+        if not headlines:
+            raise HTTPException(
+                status_code=404, detail="No headlines found for the given source"
+            )
+
+        return {"status": "success", "headlines": [headline for headline in headlines]}
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching headlines: {str(e)}"
+        )
