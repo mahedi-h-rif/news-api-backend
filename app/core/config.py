@@ -22,5 +22,7 @@ class Settings:
         "NEWS_API_URL", "https://newsapi.org/v2/top-headlines?country=us"
     )
 
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "random")
+
 
 settings = Settings()
