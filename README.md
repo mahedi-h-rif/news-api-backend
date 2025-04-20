@@ -123,7 +123,7 @@ The API uses OAuth2 with client credentials flow.
 ```bash
 curl -X POST http://localhost:8000/token \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=your_client_id&client_secret=your_client_secret"
+  -d "client_id=blockstak-client&client_secret=blockstak-secret"
 ```
 
 ### 2. Use the token
