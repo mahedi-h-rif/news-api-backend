@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: news-api-backend
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/newsdb
+      - SECRET_KEY=your-secret-key
+      - NEWS_API_KEY=your-news-api-key
+      - NEWS_API_URL=https://newsapi.org/v2/top-headlines?country=us
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    container_name: news-db
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=newsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
